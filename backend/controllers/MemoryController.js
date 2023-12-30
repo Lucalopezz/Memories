@@ -1,5 +1,16 @@
 const Memory = require("../models/Memory");
 
+const fs = require("fs");
+const removeOldImage = (memory) => {
+  fs.unlink(`public/${memory.src}`, (err) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Imagem excluida com sucesso");
+    }
+  });
+};
+
 const createMemory = async (req, res) => {
   try {
     const { title, description } = req.body;
@@ -29,8 +40,7 @@ const getMemories = async (req, res) => {
   try {
     const memories = await Memory.find();
 
-    res.json(memories)
-
+    res.json(memories);
   } catch (error) {
     res.status(500).send("Ocorreu um erro!");
   }
@@ -39,21 +49,127 @@ const getMemory = async (req, res) => {
   try {
     const memory = await Memory.findById(req.params.id);
 
-    if(!memory){
-      return res.status(404).json({msg: "Memória não encontrada!"})
+    if (!memory) {
+      return res.status(404).json({ msg: "Memória não encontrada!" });
     }
 
-    res.json(memory)
-
+    res.json(memory);
   } catch (error) {
-    res.status(500).send("Ocorreu um erro! Por favor, tente novamente mais tarde.");
+    res
+      .status(500)
+      .send("Ocorreu um erro! Por favor, tente novamente mais tarde.");
   }
 };
 
+const deleteMemory = async (req, res) => {
+  try {
+    const memory = await Memory.findByIdAndDelete(req.params.id);
 
+    if (!memory) {
+      return res.status(404).json({ msg: "Memória não encontrada!" });
+    }
+    removeOldImage(memory);
+    res.json({ msg: "Memoria excluída!" });
+  } catch (error) {
+    res
+      .status(500)
+      .send("Ocorreu um erro! Por favor, tente novamente mais tarde.");
+  }
+};
+
+const updateMemory = async (req, res) => {
+  try {
+    const { title, description } = req.body;
+    let src = null;
+    if (req.file) {
+      src = `images/${req.file.filename}`;
+    }
+
+    const memory = await Memory.findById(req.params.id);
+
+    if (!memory) {
+      return res.status(404).json({ msg: "Memória não encontrada!" });
+    }
+    if (src) {
+      removeOldImage(memory);
+    }
+    const updateData = {};
+
+    if (title) updateData.title = title;
+    if (description) updateData.description = description;
+    if (src) updateData.src = src;
+
+    const updateMemory = await Memory.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+
+    res.json({ updateMemory, msg: "Memoria editada!" });
+  } catch (error) {
+    res
+      .status(500)
+      .send("Ocorreu um erro! Por favor, tente novamente mais tarde.");
+  }
+};
+const toggleFavorite = async (req, res) => {
+  try {
+    const memory = await Memory.findById(req.params.id);
+
+    if (!memory) {
+      return res.status(404).json({ msg: "Memória não encontrada!" });
+    }
+    // igual ao contrario, para favoritar e desfavoritar
+    memory.favorite = !memory.favorite;
+
+    await memory.save();
+
+    res.json({ msg: "Adicionada aos favoritos", memory });
+  } catch (error) {
+    res
+      .status(500)
+      .send("Ocorreu um erro! Por favor, tente novamente mais tarde.");
+  }
+};
+
+const addComment = async (req, res) => {
+  try {
+    const { name, text } = req.body;
+
+    if (!name || !text) {
+      return res
+        .status(400)
+        .json({ msg: "Por favor, preencha todos os campos." });
+    }
+
+    const comment = {
+      name,
+      text,
+    };
+
+    const memory = await Memory.findById(req.params.id);
+
+    if (!memory) {
+      return res.status(404).json({ msg: "Memória não encontrada!" });
+    }
+
+    memory.comments.push(comment);
+
+    memory.save();
+
+    res.json({ msg: "Comentário adicionado!", memory });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ msg: "Por favor, tente novamente" });
+  }
+};
 
 module.exports = {
   createMemory,
   getMemories,
-  getMemory
+  getMemory,
+  deleteMemory,
+  updateMemory,
+  toggleFavorite,
+  addComment
 };
