@@ -49,3 +49,8 @@ textarea {
   width: 100%;
 }
 
+.error-msg {
+  margin-left: 0.4rem;
+  font-size: 0.8rem;
+  color: red;
+}

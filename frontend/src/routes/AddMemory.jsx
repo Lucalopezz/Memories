@@ -6,18 +6,27 @@ import axios from "../axios-config";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
-
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CreateMemoryForm = z.object({
-  title: z.string().nonempty('O título é obrigatório'),
-  description: z.string().nonempty('A descrição é obrigatório'),
-  image: z.instanceof(FileList)
-})
+  title: z.string().nonempty("O título é obrigatório"),
+  description: z.string().nonempty("A descrição é obrigatório"),
+  image: z.instanceof(FileList).refine((files) => files.length > 0, {
+    message: "A imagem é obrigatória",
+  }),
+});
 
 const AddMemory = () => {
-  const { register, handleSubmit, formState: {errors} } = useForm({
-    resolver: zodResolver(CreateMemoryForm)});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(CreateMemoryForm),
+  });
+
+  const navigate = useNavigate()
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -33,8 +42,12 @@ const AddMemory = () => {
           "Content-Type": "multipart/form-data",
         },
       });
+      toast.success(response.data.msg);
+
+      navigate("/");
     } catch (error) {
       console.log(error);
+      toast.error(error.response.data.msg);
     }
   };
 
@@ -58,13 +71,11 @@ const AddMemory = () => {
             {...register("description")}
           ></textarea>
           <span className="error-msg">{errors.description?.message}</span>
-
         </label>
         <label>
           <p>Foto</p>
-          <input type="file" {...register("image")} accept="image/*" required/>
-          
-
+          <input type="file" {...register("image")} accept="image/*" />
+          <span className="error-msg">{errors.image?.message}</span>
         </label>
         <input type="submit" className="btn" value="Enviar" />
       </form>

@@ -1,20 +1,36 @@
-import { Outlet } from 'react-router-dom'
-import './App.css'
-import Navbar from './components/Navbar'
-import Footer from './components/Footer'
+import { Outlet } from "react-router-dom";
+import "./App.css";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+
+import { ToastContainer } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+
+// Coisas pra fazer : componentizar os inputs, fazer sessão de favoritos e parte de favoritar a memoria, exclusão da memoria//
 
 function App() {
- 
-
   return (
     <div className="App">
-      <Navbar/>
-     <div className="container">
-     <Outlet/>
-     </div>
-     <Footer/>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <Navbar />
+      <div className="container">
+        <Outlet />
+      </div>
+      <Footer />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
