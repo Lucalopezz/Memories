@@ -3,13 +3,21 @@ import axios from "../axios-config";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { toast } from "react-toastify";
 
+//Toast e css
+import { toast } from "react-toastify";
 import "./Memory.css";
 
-import { useForm } from "react-hook-form";
+
+//Zod e form
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useForm } from "react-hook-form";
+
+
+
+//React icons
+import { FaHeart, FaRegHeart } from "react-icons/fa6";
 
 const CreateCommentForm = z.object({
   name: z.string().nonempty("O nome é obrigatório"),
@@ -34,9 +42,9 @@ const Memory = () => {
       let name = data.name;
       let text = data.text;
 
-      const commentAdd = { name, text};
+      const commentAdd = { name, text };
 
-      console.log(commentAdd)
+      //console.log(commentAdd);
 
       const res = await axios.patch(
         `/memories/${memory._id}/comment/`,
@@ -67,8 +75,15 @@ const Memory = () => {
   return (
     <div className="memory-page">
       <img src={`${axios.defaults.baseURL}${memory.src}`} alt={memory.title} />
-      <h2>{memory.title}</h2>
-      <p>{memory.description}</p>
+      <div className="infos">
+        <button className="btn favorite-btn">
+          {memory.favorite ? <FaHeart /> : <FaRegHeart />}
+        </button>
+        <div>
+          <h2>{memory.title}</h2>
+          <p>{memory.description}</p>
+        </div>
+      </div>
       <div className="comment-form">
         <h3>Envie o seu comentário:</h3>
         <form onSubmit={handleSubmit(onSubmit)}>
