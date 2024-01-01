@@ -7,7 +7,7 @@ import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
-// Coisas pra fazer : componentizar os inputs, fazer sessão de favoritos e parte de favoritar a memoria, exclusão da memoria//
+// Coisas pra fazer : componentizar os inputs, fazer sessão de favoritos e parte de favoritar a memoria, exclusão da memoria e barra de pesquisa!!
 
 function App() {
   return (
