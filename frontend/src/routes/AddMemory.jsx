@@ -9,6 +9,10 @@ import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+
+import Input from "../components/form/Input";
+import TextArea from "../components/form/TextArea";
+
 const CreateMemoryForm = z.object({
   title: z.string().nonempty("O título é obrigatório"),
   description: z.string().nonempty("A descrição é obrigatório"),
@@ -55,23 +59,20 @@ const AddMemory = () => {
     <div className="add-memory-page">
       <h2>Crie uma nova memória</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <label>
-          <p>Título</p>
-          <input
+      <Input
+            text="Título"
+            name="name"
             type="text"
             placeholder="Defina um titulo"
             {...register("title")}
+            helperText={errors?.title?.message}
           />
-          <span className="error-msg">{errors.title?.message}</span>
-        </label>
-        <label>
-          <p>Descrição:</p>
-          <textarea
-            placeholder="Diga oq aconteceu"
+           <TextArea
+            text="Descrição"
             {...register("description")}
-          ></textarea>
-          <span className="error-msg">{errors.description?.message}</span>
-        </label>
+            placeholder="Diga o que aconteceu nesta memória"
+            helperText={errors?.description?.message}
+          />
         <label>
           <p>Foto</p>
           <input type="file" {...register("image")} accept="image/*" />

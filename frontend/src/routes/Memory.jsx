@@ -3,21 +3,19 @@ import axios from "../axios-config";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-
 //Toast e css
 import { toast } from "react-toastify";
 import "./Memory.css";
-
 
 //Zod e form
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 
-
-
 //React icons
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import Input from "../components/form/Input";
+import TextArea from "../components/form/TextArea";
 
 const CreateCommentForm = z.object({
   name: z.string().nonempty("O nome é obrigatório"),
@@ -65,8 +63,10 @@ const Memory = () => {
     try {
       const res = await axios.patch(`memories/favorite/${id}`);
       toast.success(res.data.msg);
-      setmemory((prevMemory) => ({ ...prevMemory, favorite: !prevMemory.favorite }));
-
+      setmemory((prevMemory) => ({
+        ...prevMemory,
+        favorite: !prevMemory.favorite,
+      }));
     } catch (error) {
       toast.error(error.response.data.msg);
     }
@@ -76,7 +76,6 @@ const Memory = () => {
     const getMemory = async () => {
       const res = await axios.get(`/memories/${id}`);
       setmemory(res.data);
-
 
       setcomments(res.data.comments);
     };
@@ -88,35 +87,36 @@ const Memory = () => {
     <div className="memory-page">
       <img src={`${axios.defaults.baseURL}${memory.src}`} alt={memory.title} />
       <div className="infos">
-       
         <div>
           <h2>{memory.title}</h2>
           <p>{memory.description}</p>
         </div>
-        <button className="btn favorite-btn" onClick={() => favoriteMemory(memory._id)}>
+        <button
+          className="btn favorite-btn"
+          onClick={() => favoriteMemory(memory._id)}
+        >
           {memory.favorite ? <FaHeart /> : <FaRegHeart />}
         </button>
       </div>
       <div className="comment-form">
         <h3>Envie o seu comentário:</h3>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <label>
-            <p>Título</p>
-            <input
-              type="text"
-              placeholder="Digite seu nome"
-              {...register("name")}
-            />
-            <span className="error-msg">{errors.name?.message}</span>
-          </label>
-          <label>
-            <p>Título</p>
-            <textarea
-              {...register("text")}
-              placeholder="O que você achou da memória?"
-            ></textarea>
-            <span className="error-msg">{errors.text?.message}</span>
-          </label>
+          <Input
+            text="Nome"
+            name="name"
+            type="text"
+            placeholder="Digite seu nome"
+            {...register("name")}
+            helperText={errors?.name?.message}
+          />
+
+          <TextArea
+            text="Título"
+            {...register("text")}
+            placeholder="O que você achou da memória?"
+            helperText={errors?.text?.message}
+          />
+
           <input type="submit" className="btn" value="Enviar" />
         </form>
       </div>
