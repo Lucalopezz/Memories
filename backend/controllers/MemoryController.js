@@ -119,12 +119,15 @@ const toggleFavorite = async (req, res) => {
     if (!memory) {
       return res.status(404).json({ msg: "Memória não encontrada!" });
     }
-    // igual ao contrario, para favoritar e desfavoritar
-    memory.favorite = !memory.favorite;
 
+    // altera o estado do atributo 'favorite'
+    memory.favorite = !memory.favorite;
     await memory.save();
 
-    res.json({ msg: "Adicionada aos favoritos", memory });
+    // Define a ação realizada com base no estado anterior e atual do atributo 'favorite'
+    const action = memory.favorite ? "Adicionada" : "Removida";
+    
+    res.json({ msg: `${action} aos favoritos`, memory });
   } catch (error) {
     res
       .status(500)

@@ -27,6 +27,7 @@ const CreateCommentForm = z.object({
 const Memory = () => {
   const { id } = useParams();
   const [memory, setmemory] = useState(null);
+
   const [comments, setcomments] = useState([]);
 
   const {
@@ -60,11 +61,22 @@ const Memory = () => {
       toast.error(error.response.data.msg);
     }
   };
+  const favoriteMemory = async (id) => {
+    try {
+      const res = await axios.patch(`memories/favorite/${id}`);
+      toast.success(res.data.msg);
+      setmemory((prevMemory) => ({ ...prevMemory, favorite: !prevMemory.favorite }));
+
+    } catch (error) {
+      toast.error(error.response.data.msg);
+    }
+  };
 
   useEffect(() => {
     const getMemory = async () => {
       const res = await axios.get(`/memories/${id}`);
       setmemory(res.data);
+
 
       setcomments(res.data.comments);
     };
@@ -76,13 +88,14 @@ const Memory = () => {
     <div className="memory-page">
       <img src={`${axios.defaults.baseURL}${memory.src}`} alt={memory.title} />
       <div className="infos">
-        <button className="btn favorite-btn">
-          {memory.favorite ? <FaHeart /> : <FaRegHeart />}
-        </button>
+       
         <div>
           <h2>{memory.title}</h2>
           <p>{memory.description}</p>
         </div>
+        <button className="btn favorite-btn" onClick={() => favoriteMemory(memory._id)}>
+          {memory.favorite ? <FaHeart /> : <FaRegHeart />}
+        </button>
       </div>
       <div className="comment-form">
         <h3>Envie o seu comentário:</h3>

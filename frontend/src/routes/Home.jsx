@@ -1,10 +1,11 @@
 import axios from "../axios-config";
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 //React icons e css
-import { FaHeart, FaRegHeart } from "react-icons/fa6";
+import { FaHeart, FaRegHeart, FaSearch } from "react-icons/fa";
+
 import "./Home.css";
 
 //Toast
@@ -12,6 +13,8 @@ import { toast } from "react-toastify";
 
 const Home = () => {
   const [memories, setmemories] = useState([]);
+  const navigate = useNavigate();
+  const [query, setQuery] = useState();
 
   useEffect(() => {
     const getMemories = async () => {
@@ -28,17 +31,36 @@ const Home = () => {
       toast.success(res.data.msg);
 
       setmemories((prevMemories) =>
-      prevMemories.map((memory) =>
-        memory._id === id ? { ...memory, favorite: !memory.favorite } : memory
-      )
-    );
-      
+        prevMemories.map((memory) =>
+          memory._id === id ? { ...memory, favorite: !memory.favorite } : memory
+        )
+      );
     } catch (error) {
       toast.error(error.response.data.msg);
     }
   };
+
+  const search = (e) => {
+    e.preventDefault();
+
+    navigate("/search?q=" + query);
+  };
   return (
     <div className="home">
+      <div class="search-container">
+        <form onSubmit={search} class="search">
+          <div class="input-btn-container">
+            <input
+              type="text"
+              placeholder="Digite o nome da memória que você deeja encontrar"
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button type="submit" class="btn">
+              <FaSearch />
+            </button>
+          </div>
+        </form>
+      </div>
       <h2>Confira as ultimas Memórias</h2>
       <div className="memories-container">
         {memories.length > 0 &&

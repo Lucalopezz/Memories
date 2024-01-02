@@ -32,3 +32,39 @@
   flex-direction: row;
   justify-content: space-between;
 }
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+ }
+ 
+ .search {
+  display: inline-block;
+  text-align: center;
+  width: 40%;
+ }
+ 
+ .input-btn-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+ }
+ 
+ .input-btn-container input[type="text"] {
+  width: 90%;
+  padding: 5px;
+  margin-right: 5px;
+ }
+ 
+ .input-btn-container button {
+  width: 5%;
+
+  padding: 5px;
+  color: white;
+  cursor: pointer;
+ }
+
+ 
+
+ 
